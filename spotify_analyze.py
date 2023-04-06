@@ -149,17 +149,17 @@ def create_artist_sentiment_bar_chart(artist_sentiment: dict[str, float], output
     plt.clf()
 
 
-def create_artist_distribution_pie_chart(songs: List[Song], output_file: str):
+def create_artist_distribution_pie_chart(songs: List[Song], output_file: str, distinct_artists: int = 10):
     artist_count = Counter(song.artist for song in songs)
     sorted_artists = sorted(artist_count.items(), key=lambda x: x[1], reverse=True)
     
     # Get the top 5 artists and their counts
-    top_artists = sorted_artists[:5]
+    top_artists = sorted_artists[:distinct_artists]
     top_artists_names = [artist[0] for artist in top_artists]
     top_artists_counts = [artist[1] for artist in top_artists]
     
     # Get the count of all remaining artists
-    other_artists_count = sum(artist[1] for artist in sorted_artists[5:])
+    other_artists_count = sum(artist[1] for artist in sorted_artists[distinct_artists:])
     
     # Add the "Other" category to the lists
     top_artists_names.append("Other")
@@ -182,7 +182,7 @@ def main():
     songs = read_songs_from_csv(csv_file)
     print(f"Number of songs: {len(songs)}")
 
-    output_dir = "visualizations"
+    output_dir = f"visualizations/{playlist_id}"
     os.makedirs(output_dir, exist_ok=True)
     print(f"Number of songs: {len(songs)}")
 
