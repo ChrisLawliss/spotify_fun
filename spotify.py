@@ -103,22 +103,22 @@ def search_playlist(query: str, auth_token: str) -> str:
     response = requests.get(search_url, headers=headers)
     response.raise_for_status()
     playlists_data = response.json()['playlists']['items']
-
-    print("Search results:")
+    print(f"Search results for {query}")
     selected_index = None
     while selected_index is None:
-        for j in range(1, len(playlists_data), 10):
+        for j in range(0, len(playlists_data), 10):
+            print(f'Page {j//10 + 1}')
             for i, playlist in enumerate(playlists_data[j:j+10]):
-                print(f"{j+i + 1}. {playlist['name']} by {playlist['owner']['display_name']}")
-
-            selected_index = input("Enter the number of the playlist you want to select: ")
+                if selected_index is None:
+                    print(f"{j+i+1}. {playlist['name']} by {playlist['owner']['display_name']}")
+            if selected_index is None:
+                selected_index = input("Enter the number of the playlist you want to select: ")
+                print(f'You selected \"{selected_index}\"')
             if selected_index == '':
                 selected_index = None
-            else:
-                selected_index = int(selected_index) - 1
-                # clear output
-                print("\033c", end="")
-                print(f'You selected {playlists_data[selected_index]["name"]} by {playlists_data[selected_index]["owner"]["display_name"]}')
+        else:
+            selected_index = int(selected_index) - 1
+            print(f'You selected {playlists_data[selected_index]["name"]} by {playlists_data[selected_index]["owner"]["display_name"]}')
     return playlists_data[selected_index]['id']
 
 def search_playlist_interactive() -> str:
